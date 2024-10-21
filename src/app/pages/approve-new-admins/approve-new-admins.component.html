@@ -1,0 +1,7 @@
+<h1>Approve new admins requests</h1>
+@for (request of adminRequestsForApproval(); track request.requesterUsername) {
+<div class="request-item">
+  <p>{{ request.requesterUsername }}</p>
+  <button tuiButton (click)="approve(request)">Approve</button>
+</div>
+}

@@ -1,0 +1,27 @@
+<form tuiCardLarge tuiSurface="elevated" [formGroup]="loginForm">
+  <p class="tui-text_h1">Login</p>
+
+  <tui-textfield iconStart="@tui.user">
+    <label tuiLabel>Username</label>
+    <input tuiTextfield formControlName="username" />
+  </tui-textfield>
+
+  <tui-textfield iconStart="@tui.hash">
+    <label tuiLabel>Password</label>
+    <input tuiTextfield formControlName="password" type="password" />
+    <tui-icon tuiPassword />
+  </tui-textfield>
+
+  <button
+    tuiButton
+    type="button"
+    [disabled]="!loginForm.valid"
+    (click)="login()"
+  >
+    Login
+  </button>
+  <div class="bottom-link">
+    Don't have an account?
+    <a tuiLink routerLink="/register">Create one</a>
+  </div>
+</form>

@@ -13,7 +13,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {},
+    "paths": {
+      "@dg-shared/*": ["src/app/shared/*"],
+      "@dg-pages/*": ["src/app/pages/*"],
+      "@dg-core/*": ["src/app/core/*"],
+      "@dg-environment": ["src/environments/environment"]
+    },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,

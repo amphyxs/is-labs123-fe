@@ -1,0 +1,32 @@
+<form tuiCardLarge tuiSurface="elevated" [formGroup]="registrationForm">
+  <p class="tui-text_h1">Register</p>
+
+  <tui-textfield iconStart="@tui.user">
+    <label tuiLabel>Username</label>
+    <input tuiTextfield formControlName="username" />
+  </tui-textfield>
+
+  <tui-textfield iconStart="@tui.hash">
+    <label tuiLabel>Password</label>
+    <input tuiTextfield formControlName="password" type="password" />
+    <tui-icon tuiPassword />
+  </tui-textfield>
+
+  <label class="admin-checkbox">
+    <input tuiCheckbox type="checkbox" formControlName="isAdmin" />
+    <span>Request admin rights</span>
+  </label>
+
+  <button
+    tuiButton
+    type="button"
+    [disabled]="!registrationForm.valid"
+    (click)="register()"
+  >
+    Register
+  </button>
+  <div class="bottom-link">
+    Already have an account?
+    <a tuiLink routerLink="/login">Login here</a>
+  </div>
+</form>
