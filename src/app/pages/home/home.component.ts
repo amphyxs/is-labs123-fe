@@ -119,7 +119,8 @@ export class HomeComponent {
     )
   );
   readonly filterFn = (item: object, value: object | null): boolean =>
-    !value || item.toString().includes(value.toString());
+    !value ||
+    item.toString().toLowerCase().includes(value.toString().toLowerCase());
   readonly isLoading = signal(false);
   readonly page = signal(0);
   readonly totalItems = signal(0);
