@@ -105,9 +105,13 @@ export class HomeComponent {
       {}
     )
   );
-  readonly filterFn = (item: object, value: object | null): boolean =>
+  readonly filterFn = (
+    item: object | undefined | null,
+    value: object | null
+  ): boolean =>
     !value ||
-    item.toString().toLowerCase().includes(value.toString().toLowerCase());
+    (item?.toString().toLowerCase().includes(value.toString().toLowerCase()) ??
+      false);
   readonly isLoading = signal(true);
   readonly page = signal(0);
   readonly totalItems = signal(0);
