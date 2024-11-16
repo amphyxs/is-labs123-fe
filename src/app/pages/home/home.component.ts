@@ -1,4 +1,4 @@
-import { interval, Subscription, switchMap, merge, tap } from 'rxjs';
+import { interval, switchMap, merge, tap } from 'rxjs';
 import {
   TuiInputModule,
   TuiInputNumberModule,
@@ -12,6 +12,7 @@ import {
   inject,
   INJECTOR,
   input,
+  OnInit,
   signal,
 } from '@angular/core';
 import {
@@ -73,7 +74,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
   styleUrl: './home.component.less',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private readonly dragonService = inject(DRAGON_SERVICE);
   private readonly dialogService = inject(TuiDialogService);
   private readonly injector = inject(INJECTOR);
@@ -114,6 +115,7 @@ export class HomeComponent {
       false);
   readonly isLoading = signal(true);
   readonly page = signal(0);
+  readonly page$ = toObservable(this.page);
   readonly totalItems = signal(0);
   readonly data = signal<Dragon[]>([]);
   readonly pageSize = 5;
@@ -148,9 +150,7 @@ export class HomeComponent {
   };
   readonly actionWithDragon = ActionWithDragon;
 
-  private getDragonListSubscription?: Subscription;
-
-  constructor() {
+  ngOnInit(): void {
     const inputData = this.inputData();
     if (inputData) {
       this.data.set(inputData);
@@ -159,10 +159,7 @@ export class HomeComponent {
       return;
     }
 
-    merge(
-      interval(this.DRAGONS_LIST_REFRESH_INTERVAL_MS),
-      toObservable(this.page)
-    )
+    merge(interval(this.DRAGONS_LIST_REFRESH_INTERVAL_MS), this.page$)
       .pipe(
         tuiTakeUntilDestroyed(this.destroyRef),
         tap(() => this.dragonService.refreshDragonsList$.next(null)),
