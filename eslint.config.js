@@ -33,11 +33,14 @@ module.exports = [
           style: 'kebab-case',
         },
       ],
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
   {
     files: ['**/*.html'],
     // Override or add rules here
-    rules: {},
+    rules: {
+      '@angular-eslint/template/label-has-associated-control': 'off',
+    },
   },
 ];
