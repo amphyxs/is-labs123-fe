@@ -68,7 +68,7 @@ export class Dragon extends Model {
       null,
       null,
       null,
-      new Owner(dependencies.owner.username, null),
+      new Owner(dependencies.owner.username),
       false,
       null,
       new Date()
@@ -249,12 +249,12 @@ export enum DragonCharacter {
 }
 
 export class Owner extends Model {
-  constructor(public username: string, override id: number | null) {
+  constructor(public username: string) {
     super();
   }
 
   static override fromGetDao(dao: OwnerGetDao): Owner {
-    return new Owner(dao.username, dao.id);
+    return new Owner(dao.username);
   }
 
   override toString(): string {

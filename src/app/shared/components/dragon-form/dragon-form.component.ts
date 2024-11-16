@@ -169,7 +169,7 @@ export class DragonFormComponent {
 
   save(): void {
     const formValues = this.dragonForm!.value;
-    const owner = new Owner(this.authService.currentUser!.username, null);
+    const owner = new Owner(this.authService.currentUser!.username);
     const dragon: Dragon = new Dragon(
       formValues.name,
       formValues.coordinates.existing,
