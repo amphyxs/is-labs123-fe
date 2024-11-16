@@ -12,6 +12,7 @@ import {
   map,
   mergeMap,
   Observable,
+  take,
   toArray,
 } from 'rxjs';
 import {
@@ -27,7 +28,7 @@ import { Model } from '@dg-core/types/models/model';
 export abstract class AbstractDragonService {
   protected readonly http = inject(HttpClient);
 
-  readonly refreshDragonList$ = new BehaviorSubject(null);
+  readonly refreshDragonsList$ = new BehaviorSubject(null);
 
   abstract getDragonsList$(
     requestParams: DragonsGetRequest
@@ -93,6 +94,7 @@ export abstract class AbstractDragonService {
     dependencyName: keyof Dragon
   ): Observable<Model[]> {
     return this.getDragonsList$({}).pipe(
+      take(1),
       map((response) => response.data),
       mergeMap((dragons) => dragons),
       map((dragons) => dragons[dependencyName]),

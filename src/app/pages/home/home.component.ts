@@ -1,15 +1,14 @@
-import { interval, merge, switchMap } from 'rxjs';
+import { interval, Subscription, switchMap, merge, tap } from 'rxjs';
 import {
   TuiInputModule,
   TuiInputNumberModule,
   TuiTextfieldControllerModule,
 } from '@taiga-ui/legacy';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  effect,
   inject,
   INJECTOR,
   input,
@@ -22,7 +21,6 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import {
-  TuiReorder,
   TuiTable,
   TuiTableFilters,
   TuiTablePagination,
@@ -35,12 +33,9 @@ import {
   TuiLoader,
   TuiTextfield,
 } from '@taiga-ui/core';
-import { TuiAccordion, TuiChevron, TuiStatus } from '@taiga-ui/kit';
+import { TuiAccordion, TuiStatus } from '@taiga-ui/kit';
 import { Dragon } from '@dg-core/types/models/dragon';
-import {
-  DRAGON_SERVICE,
-  dragonServiceFactory,
-} from '@dg-core/di/dragon-service';
+import { DRAGON_SERVICE } from '@dg-core/di/dragon-service';
 import {
   DragonFormComponent,
   DragonFormDialogContext,
@@ -49,6 +44,7 @@ import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { ActionWithDragon } from '@dg-core/types/action-with-dragon.types';
 import { AuthService } from '@dg-core/services/auth.service';
 import { AccountType } from '@dg-core/types/models/user';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -58,16 +54,13 @@ import { AccountType } from '@dg-core/types/models/user';
     AsyncPipe,
     FormsModule,
     NgForOf,
-    NgIf,
     ReactiveFormsModule,
     TuiButton,
-    TuiChevron,
     TuiDropdown,
     TuiInputModule,
     TuiInputNumberModule,
     TuiLet,
     TuiLoader,
-    TuiReorder,
     TuiTable,
     TuiTablePagination,
     TuiTextfieldControllerModule,
@@ -75,12 +68,6 @@ import { AccountType } from '@dg-core/types/models/user';
     TuiAccordion,
     TuiStatus,
     TuiButton,
-  ],
-  providers: [
-    {
-      provide: DRAGON_SERVICE,
-      useFactory: dragonServiceFactory,
-    },
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.less',
@@ -121,7 +108,7 @@ export class HomeComponent {
   readonly filterFn = (item: object, value: object | null): boolean =>
     !value ||
     item.toString().toLowerCase().includes(value.toString().toLowerCase());
-  readonly isLoading = signal(false);
+  readonly isLoading = signal(true);
   readonly page = signal(0);
   readonly totalItems = signal(0);
   readonly data = signal<Dragon[]>([]);
@@ -157,46 +144,39 @@ export class HomeComponent {
   };
   readonly actionWithDragon = ActionWithDragon;
 
+  private getDragonListSubscription?: Subscription;
+
   constructor() {
-    effect(
-      (onCleanup) => {
-        const inputData = this.inputData();
-        if (inputData) {
-          this.data.set(inputData);
-          this.totalItems.set(inputData.length);
-          return;
-        }
+    const inputData = this.inputData();
+    if (inputData) {
+      this.data.set(inputData);
+      this.totalItems.set(inputData.length);
+      this.isLoading.set(false);
+      return;
+    }
 
-        this.isLoading.set(true);
-
-        const getDragonListSubscription = merge(
-          interval(this.DRAGONS_LIST_REFRESH_INTERVAL_MS),
-          this.dragonService.refreshDragonList$
+    merge(
+      interval(this.DRAGONS_LIST_REFRESH_INTERVAL_MS),
+      toObservable(this.page)
+    )
+      .pipe(
+        tuiTakeUntilDestroyed(this.destroyRef),
+        tap(() => this.dragonService.refreshDragonsList$.next(null)),
+        switchMap(() =>
+          this.dragonService.getDragonsList$({
+            filters: {}, // TODO: implement real filters and sorting
+            pagination: {
+              page: this.page(),
+              pageSize: this.pageSize,
+            },
+          })
         )
-          .pipe(
-            switchMap(() =>
-              this.dragonService.getDragonsList$({
-                filters: {}, // TODO: implement real filters and sorting
-                pagination: {
-                  page: this.page(),
-                  pageSize: this.pageSize,
-                },
-              })
-            ),
-            tuiTakeUntilDestroyed(this.destroyRef)
-          )
-          .subscribe((response) => {
-            this.data.set(response.data);
-            this.totalItems.set(response.total);
-            this.isLoading.set(false);
-          });
-
-        onCleanup(() => {
-          getDragonListSubscription.unsubscribe();
-        });
-      },
-      { allowSignalWrites: true }
-    );
+      )
+      .subscribe((response) => {
+        this.data.set(response.data);
+        this.totalItems.set(response.total);
+        this.isLoading.set(false);
+      });
   }
 
   edit(item: Dragon): void {
@@ -214,13 +194,13 @@ export class HomeComponent {
       )
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
-        complete: () => this.dragonService.refreshDragonList$.next(null),
+        complete: () => this.dragonService.refreshDragonsList$.next(null),
       });
   }
 
   remove(item: Dragon): void {
     this.dragonService.removeDragon$(item).subscribe({
-      complete: () => this.dragonService.refreshDragonList$.next(null),
+      complete: () => this.dragonService.refreshDragonsList$.next(null),
     });
   }
 

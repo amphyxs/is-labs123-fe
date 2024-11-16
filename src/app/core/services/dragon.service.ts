@@ -10,7 +10,14 @@ import { AbstractDragonService } from '@dg-core/services/abstract-dragon.service
 import { DragonsGetRequest } from '@dg-core/types/request.types';
 import { PaginatedResponse } from '@dg-core/types/response.types';
 import { environment } from '@dg-environment';
-import { map, mergeMap, Observable, toArray } from 'rxjs';
+import {
+  map,
+  mergeMap,
+  Observable,
+  shareReplay,
+  switchMap,
+  toArray,
+} from 'rxjs';
 import { AuthService } from './auth.service';
 import { DragonGetDao } from '@dg-core/types/models/daos/dragon.daos';
 
@@ -20,20 +27,28 @@ import { DragonGetDao } from '@dg-core/types/models/daos/dragon.daos';
 export class DragonService extends AbstractDragonService {
   protected readonly authService = inject(AuthService);
 
+  private readonly dragonRequest$ = this.refreshDragonsList$.pipe(
+    switchMap(() =>
+      this.http.get<DragonGetDao[]>(`${environment.apiUrl}/dragons`, {
+        headers: this.authService.getAuthHeaders(),
+      })
+    ),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    })
+  );
+
   override getDragonsList$(
     requestParams: DragonsGetRequest
   ): Observable<PaginatedResponse<Dragon>> {
-    const url = `${environment.apiUrl}/dragons`;
+    return this.dragonRequest$.pipe(
+      map((daos) => {
+        const data = daos.map((dao) => Dragon.fromGetDao(dao));
 
-    return this.http
-      .get<DragonGetDao[]>(url, { headers: this.authService.getAuthHeaders() })
-      .pipe(
-        map((daos) => {
-          const data = daos.map((dao) => Dragon.fromGetDao(dao));
-
-          return this.processDragonsList(data, requestParams);
-        })
-      );
+        return this.processDragonsList(data, requestParams);
+      })
+    );
   }
 
   override getDragonCavesList$(): Observable<DragonCave[]> {

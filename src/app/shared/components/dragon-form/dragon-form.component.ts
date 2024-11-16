@@ -12,10 +12,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  DRAGON_SERVICE,
-  dragonServiceFactory,
-} from '@dg-core/di/dragon-service';
+import { DRAGON_SERVICE } from '@dg-core/di/dragon-service';
 import { Dragon, Owner } from '@dg-core/types/models/dragon';
 import {
   TuiButton,
@@ -67,10 +64,6 @@ export type DragonFormDialogContext = {
     TuiCheckbox,
   ],
   providers: [
-    {
-      provide: DRAGON_SERVICE,
-      useFactory: dragonServiceFactory,
-    },
     {
       provide: TUI_VALIDATION_ERRORS,
       useValue: {

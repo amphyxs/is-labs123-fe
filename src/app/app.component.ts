@@ -123,7 +123,7 @@ export class AppComponent {
       )
       .pipe(tuiTakeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.dragonService.refreshDragonList$.next(null), // TODO: не работает
+        next: () => this.dragonService.refreshDragonsList$.next(null),
       });
   }
 
