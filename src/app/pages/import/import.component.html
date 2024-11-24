@@ -1,9 +1,12 @@
 <header>
   <h1>Imports</h1>
-  <button appearance="outline" size="l" tuiButton type="button">
-    <tui-icon icon="@tui.file-down" [style.height.rem]="1" />
-    New import
-  </button>
+  <label tuiInputFiles>
+    <input
+      [accept]="importService.IMPORT_FILE_TYPE"
+      tuiInputFiles
+      [formControl]="uploadedImportFile"
+    />
+  </label>
 </header>
 @for (request of importHistoryItems(); track request.id) {
 <div
