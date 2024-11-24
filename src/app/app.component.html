@@ -14,7 +14,15 @@
     >
       Approve new admins
     </a>
-    } @if (authService.currentUser?.username) {
+    } @if (authService.isAuthenticated) {
+    <a
+      iconStart="@tui.file-down"
+      tuiIconButton
+      type="button"
+      [routerLink]="['/import']"
+    >
+      Import
+    </a>
     <button
       iconStart="@tui.log-out"
       tuiIconButton

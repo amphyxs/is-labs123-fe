@@ -1,0 +1,36 @@
+<header>
+  <h1>Imports</h1>
+  <button appearance="outline" size="l" tuiButton type="button">
+    <tui-icon icon="@tui.file-down" [style.height.rem]="1" />
+    New import
+  </button>
+</header>
+@for (request of importHistoryItems(); track request.id) {
+<div
+  tuiAppearance="floating"
+  tuiCardLarge
+  class="import-history-item tui-space_top-4"
+>
+  <section>
+    <span class="import-history-item__left-content">
+      <p><b>ID:</b> {{ request.id }}</p>
+      @if (authService.currentUser?.accountType === 'ADMIN') {
+      <tui-badge appearance="primary" iconStart="@tui.user" size="xl">
+        {{ request.owner.username }}
+      </tui-badge>
+      }
+    </span>
+    <span class="import-history-item__right-content">
+      @if (request.status === 'completed') {
+      <tui-badge appearance="success" iconStart="@tui.check" size="xl">
+        Added: {{ request.numberOfAddedObjects }}
+      </tui-badge>
+      } @else {
+      <tui-badge appearance="error" iconStart="@tui.frown" size="xl">
+        Failed
+      </tui-badge>
+      }
+    </span>
+  </section>
+</div>
+}

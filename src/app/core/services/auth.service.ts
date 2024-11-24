@@ -16,12 +16,12 @@ import {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
-} from '@dg-core/types/models/daos/auth.daos';
+} from '@dg-core/types/models/dtos/auth.dtos';
 import { User } from '@dg-core/types/models/user';
 import { AbstractAuthService } from './abstract-auth.service';
 import { AdminRequestForApproval } from '@dg-core/types/models/admin-request-for-approval';
 import { Router } from '@angular/router';
-import { AdminRequestForApprovalGetDao } from '@dg-core/types/models/daos/admin-request-for-approval.daos';
+import { AdminRequestForApprovalGetDto } from '@dg-core/types/models/dtos/admin-request-for-approval.dtos';
 
 /**
  * Сервис для аутентификации пользователя.
@@ -172,7 +172,7 @@ export class AuthService extends AbstractAuthService {
     const url = `${environment.apiUrl}/admin-request/all`;
 
     return this.http
-      .get<AdminRequestForApprovalGetDao[]>(url, {
+      .get<AdminRequestForApprovalGetDto[]>(url, {
         headers: this.getAuthHeaders(),
       })
       .pipe(

@@ -1,3 +1,3 @@
-import { AdminRequestForApprovalGetDao } from './daos/admin-request-for-approval.daos';
+import { AdminRequestForApprovalGetDto } from './dtos/admin-request-for-approval.dtos';
 
-export type AdminRequestForApproval = AdminRequestForApprovalGetDao;
+export type AdminRequestForApproval = AdminRequestForApprovalGetDto;

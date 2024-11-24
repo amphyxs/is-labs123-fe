@@ -1,19 +1,19 @@
 import { Model } from './model';
 import {
-  CoordinatesCreateDao,
-  CoordinatesGetDao,
-  DragonCaveCreateDao,
-  DragonCaveGetDao,
-  DragonCreateDao,
-  DragonGetDao,
-  DragonHeadCreateDao,
-  DragonHeadGetDao,
-  LocationCreateDao,
-  LocationGetDao,
-  OwnerGetDao,
-  PersonCreateDao,
-  PersonGetDao,
-} from './daos/dragon.daos';
+  CoordinatesCreateDto,
+  CoordinatesGetDto,
+  DragonCaveCreateDto,
+  DragonCaveGetDto,
+  DragonCreateDto,
+  DragonGetDto,
+  DragonHeadCreateDto,
+  DragonHeadGetDto,
+  LocationCreateDto,
+  LocationGetDto,
+  OwnerGetDto,
+  PersonCreateDto,
+  PersonGetDto,
+} from './dtos/dragon.dtos';
 import { User } from './user';
 
 export class Dragon extends Model {
@@ -35,7 +35,7 @@ export class Dragon extends Model {
     super(id, creationDate);
   }
 
-  override asCreateDao(): DragonCreateDao {
+  override asCreateDao(): DragonCreateDto {
     return {
       id: null,
       name: this.name,
@@ -75,7 +75,7 @@ export class Dragon extends Model {
     );
   }
 
-  static override fromGetDao(dao: DragonGetDao): Dragon {
+  static override fromGetDao(dao: DragonGetDto): Dragon {
     return new Dragon(
       dao.name,
       Coordinates.fromGetDao!(dao.coordinates) as Coordinates,
@@ -99,14 +99,14 @@ export class DragonHead extends Model {
     super();
   }
 
-  override asCreateDao(): DragonHeadCreateDao {
+  override asCreateDao(): DragonHeadCreateDto {
     return {
       id: this.id!,
       size: this.size,
     };
   }
 
-  static override fromGetDao(dao: DragonHeadGetDao): DragonHead {
+  static override fromGetDao(dao: DragonHeadGetDto): DragonHead {
     return new DragonHead(dao.size, dao.id);
   }
 
@@ -120,7 +120,7 @@ export class Coordinates extends Model {
     super();
   }
 
-  override asCreateDao(): CoordinatesCreateDao {
+  override asCreateDao(): CoordinatesCreateDto {
     return {
       id: this.id!,
       x: this.x,
@@ -128,7 +128,7 @@ export class Coordinates extends Model {
     };
   }
 
-  static override fromGetDao(dao: CoordinatesGetDao): Coordinates {
+  static override fromGetDao(dao: CoordinatesGetDto): Coordinates {
     return new Coordinates(dao.x, dao.y, dao.id);
   }
 
@@ -145,14 +145,14 @@ export class DragonCave extends Model {
     super();
   }
 
-  override asCreateDao(): DragonCaveCreateDao {
+  override asCreateDao(): DragonCaveCreateDto {
     return {
       id: this.id!,
       numberOfTreasures: this.numberOfTreasures,
     };
   }
 
-  static override fromGetDao(dao: DragonCaveGetDao): DragonCave {
+  static override fromGetDao(dao: DragonCaveGetDto): DragonCave {
     return new DragonCave(dao.numberOfTreasures, dao.id);
   }
 
@@ -175,20 +175,20 @@ export class Person extends Model {
     super();
   }
 
-  override asCreateDao(): PersonCreateDao {
+  override asCreateDao(): PersonCreateDto {
     return {
       id: this.id!,
       birthday: this.birthday?.toISOString() ?? null,
       eyeColor: this.eyeColor.toUpperCase() as Color,
       hairColor: (this.hairColor?.toUpperCase() as Color) ?? null,
       height: this.height,
-      location: (this.location?.asCreateDao!() as LocationCreateDao) ?? null,
+      location: (this.location?.asCreateDao!() as LocationCreateDto) ?? null,
       name: this.name,
       passportID: this.passportId,
     };
   }
 
-  static override fromGetDao(dao: PersonGetDao | null): Person | null {
+  static override fromGetDao(dao: PersonGetDto | null): Person | null {
     return dao
       ? new Person(
           dao.name,
@@ -218,7 +218,7 @@ export class Location extends Model {
     super();
   }
 
-  static override fromGetDao(dao: LocationGetDao): Location | null {
+  static override fromGetDao(dao: LocationGetDto): Location | null {
     return dao ? new Location(dao.x, dao.y, dao.name, dao.id) : null;
   }
 
@@ -253,7 +253,7 @@ export class Owner extends Model {
     super();
   }
 
-  static override fromGetDao(dao: OwnerGetDao): Owner {
+  static override fromGetDao(dao: OwnerGetDto): Owner {
     return new Owner(dao.username);
   }
 

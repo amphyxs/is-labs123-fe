@@ -19,7 +19,7 @@ import {
   toArray,
 } from 'rxjs';
 import { AuthService } from './auth.service';
-import { DragonGetDao } from '@dg-core/types/models/daos/dragon.daos';
+import { DragonGetDto } from '@dg-core/types/models/dtos/dragon.dtos';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class DragonService extends AbstractDragonService {
 
   private readonly dragonRequest$ = this.refreshDragonsList$.pipe(
     switchMap(() =>
-      this.http.get<DragonGetDao[]>(`${environment.apiUrl}/dragons`, {
+      this.http.get<DragonGetDto[]>(`${environment.apiUrl}/dragons`, {
         headers: this.authService.getAuthHeaders(),
       })
     ),
@@ -108,7 +108,7 @@ export class DragonService extends AbstractDragonService {
     const url = `${environment.apiUrl}/special-commands/dragon-with-gigachad-killer`;
 
     return this.http
-      .get<DragonGetDao>(url, {
+      .get<DragonGetDto>(url, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(map((dao) => Dragon.fromGetDao(dao)));
@@ -118,7 +118,7 @@ export class DragonService extends AbstractDragonService {
     const url = `${environment.apiUrl}/special-commands/find-dragons-by-name-substring`;
 
     return this.http
-      .post<DragonGetDao[]>(url, searchQuery, {
+      .post<DragonGetDto[]>(url, searchQuery, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(
@@ -132,7 +132,7 @@ export class DragonService extends AbstractDragonService {
     const url = `${environment.apiUrl}/special-commands/dragon-with-the-deepest-cave`;
 
     return this.http
-      .get<DragonGetDao>(url, {
+      .get<DragonGetDto>(url, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(map((dao) => Dragon.fromGetDao(dao)));
