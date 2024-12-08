@@ -8,6 +8,6 @@ export type ImportHistoryItemDto = {
 };
 
 export enum ImportStatus {
-  Completed = 'completed',
-  Failed = 'failed',
+  Completed = 'COMPLETED',
+  Failed = 'FAILED',
 }
