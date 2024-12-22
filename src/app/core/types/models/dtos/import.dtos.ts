@@ -5,6 +5,7 @@ export type ImportHistoryItemDto = {
   status: ImportStatus;
   owner: OwnerGetDto;
   numberOfAddedObjects: number | null;
+  fileUrl: string | null;
 };
 
 export enum ImportStatus {

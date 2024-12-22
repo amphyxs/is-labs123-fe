@@ -4,7 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '@dg-core/services/auth.service';
 import { ImportService } from '@dg-core/services/import.service';
 import { tuiTakeUntilDestroyed } from '@taiga-ui/cdk';
-import { TuiAppearance } from '@taiga-ui/core';
+import { TuiAppearance, TuiButton } from '@taiga-ui/core';
 import { TuiBadge, TuiFiles } from '@taiga-ui/kit';
 import { TuiCardLarge } from '@taiga-ui/layout';
 import { filter, switchMap, tap } from 'rxjs';
@@ -17,6 +17,7 @@ import { filter, switchMap, tap } from 'rxjs';
     TuiAppearance,
     TuiBadge,
     ReactiveFormsModule,
+    TuiButton,
     TuiFiles,
   ],
   templateUrl: './import.component.html',

@@ -32,6 +32,16 @@
       <tui-badge appearance="error" iconStart="@tui.frown" size="xl">
         Failed
       </tui-badge>
+      } @if (request.fileUrl) {
+      <a
+        appearance="flat"
+        iconStart="@tui.file-down"
+        size="m"
+        tuiIconButton
+        [href]="request.fileUrl"
+      >
+        Download
+      </a>
       }
     </span>
   </section>
