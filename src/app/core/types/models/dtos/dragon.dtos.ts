@@ -79,6 +79,6 @@ export type LocationGetDto = {
 } | null;
 
 export type OwnerGetDto = {
-  id: number;
+  id?: number;
   username: string;
 };

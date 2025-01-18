@@ -139,7 +139,6 @@ export class MockDragonsService extends AbstractDragonService {
 
   private dropRandomDragon(dragons: Dragon[]): void {
     const indexToDrop = Math.floor(Math.random() * dragons.length);
-    console.log(`Drop ${indexToDrop}`);
     dragons.splice(indexToDrop, 1);
   }
 

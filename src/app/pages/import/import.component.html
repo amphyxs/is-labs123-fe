@@ -16,7 +16,7 @@
 >
   <section>
     <span class="import-history-item__left-content">
-      <p><b>ID:</b> {{ request.id }}</p>
+      <p><b>ID:</b> {{ request.id ?? '???' }}</p>
       @if (authService.currentUser?.accountType === 'ADMIN') {
       <tui-badge appearance="primary" iconStart="@tui.user" size="xl">
         {{ request.owner.username }}
@@ -24,15 +24,17 @@
       }
     </span>
     <span class="import-history-item__right-content">
-      @if (request.status === 'COMPLETED') {
+      @switch (request.status) { @case ('COMPLETED') {
       <tui-badge appearance="success" iconStart="@tui.check" size="xl">
         Added: {{ request.numberOfAddedObjects }}
       </tui-badge>
-      } @else {
+      } @case ('FAILED') {
       <tui-badge appearance="error" iconStart="@tui.frown" size="xl">
         Failed
       </tui-badge>
-      } @if (request.fileUrl) {
+      } @case ('NOT_SAVED') {
+      <tui-badge appearance="neutral" size="xl"> Not saved </tui-badge>
+      } } @if (request.fileUrl) {
       <a
         appearance="flat"
         iconStart="@tui.file-down"
@@ -46,4 +48,6 @@
     </span>
   </section>
 </div>
+} @empty {
+<p>You haven't upload any import yet</p>
 }

@@ -3,7 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { ImportHistoryItemDto } from '@dg-core/types/models/dtos/import.dtos';
 import { ImportHistoryItem } from '@dg-core/types/models/import';
 import { environment } from '@dg-environment';
-import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+} from 'rxjs';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -15,14 +22,22 @@ export class ImportService {
 
   readonly IMPORT_FILE_TYPE = 'application/json';
 
-  readonly refreshImportHistoryItems$ = new BehaviorSubject(undefined);
+  readonly refreshImportHistoryItems$ = new BehaviorSubject<
+    ImportHistoryItem[] | null
+  >(null);
   readonly importHistoryItems$ = this.refreshImportHistoryItems$.pipe(
-    switchMap(() =>
-      this.http.get<ImportHistoryItemDto[]>(`${environment.apiUrl}/import`, {
-        headers: this.authService.getAuthHeaders(),
-      })
-    ),
-    map((result) => result as ImportHistoryItem[])
+    switchMap((manualValue) =>
+      manualValue
+        ? of(manualValue)
+        : this.http
+            .get<ImportHistoryItemDto[]>(`${environment.apiUrl}/import`, {
+              headers: this.authService.getAuthHeaders(),
+            })
+            .pipe(
+              catchError(() => of([])), // Return empty array on error
+              map((result) => result as ImportHistoryItem[]) // Map to final desired type
+            )
+    )
   );
 
   uploadImportFile(importFile: File): Observable<void> {
@@ -30,7 +45,7 @@ export class ImportService {
     formData.append('file', importFile);
 
     return this.http
-      .post(`${environment.apiUrl}/import`, formData, {
+      .post(`${environment.apiUrl}/import/file`, formData, {
         headers: this.authService.getAuthHeaders(),
       })
       .pipe(

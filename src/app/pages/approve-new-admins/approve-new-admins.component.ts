@@ -9,7 +9,7 @@ import { AuthService } from '@dg-core/services/auth.service';
 import { AdminRequestForApproval } from '@dg-core/types/models/admin-request-for-approval';
 import { tuiTakeUntilDestroyed } from '@taiga-ui/cdk';
 import { TuiButton } from '@taiga-ui/core';
-import { BehaviorSubject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-approve-new-admins',
@@ -27,7 +27,6 @@ export class ApproveNewAdminsComponent {
 
   adminRequestsForApproval = toSignal(
     this.refreshAdminRequestsForApproval$.pipe(
-      tap(() => console.log('???')),
       switchMap(() => this.authService.getAdminRequestsForApproval$()),
       takeUntilDestroyed(this.destroyRef)
     )
